@@ -1,0 +1,99 @@
+{
+  "accuracy-omp": [
+    "Average execution time of accuracy kernel: ([0-9.+-e]+) \\(us\\)",
+    [
+      "8192",
+      "10000",
+      "10",
+      "100"
+    ]
+  ],
+  "adam-omp": [
+    "Average kernel execution time ([0-9.+-e]+) \\(ms\\)",
+    [
+      "10000",
+      "200",
+      "100"
+    ]
+  ],
+  "adv-omp": [
+    "elapsed time=([0-9.+-e]+)",
+    [
+      "32",
+      "32",
+      "32"
+    ]
+  ],
+  "affine-omp": [
+    "Average kernel execution time ([0-9.+-e]+) \\(s\\)",
+    [
+      "data/CT-MONO2-16-brain.raw",
+      "result.raw",
+      "1000000"
+    ]
+  ],
+  "aidw-omp": [
+    "Average kernel execution time ([0-9.+-e]+) \\(s\\)",
+    [
+      "100",
+      "0",
+      "10"
+    ]
+  ],
+  "aligned-types-omp": [
+    "\\[alignedTypes\\] -> Test Results: ([0-9]+) Failures",
+    []
+  ],
+  "all-pairs-distance-omp": [
+    "Average kernel execution time \\(w/ shared memory\\): ([0-9.+-e]+) \\(us\\)",
+    [
+      "1000"
+    ]
+  ],
+  "asmooth-omp": [
+    "Average filtering time ([0-9.+-e]+) \\(s\\)",
+    [
+      "10000",
+      "1",
+      "5",
+      "1"
+    ]
+  ],
+  "asta-omp": [
+    "Average kernel execution time ([0-9.+-e]+) \\(s\\)",
+    []
+  ],
+  "atan2-omp": [
+    "Average execution time: ([0-9.+-e]+) \\(us\\)",
+    [
+      "10000000",
+      "100"
+    ]
+  ],
+  "atomicIntrinsics-omp": [
+    "Average kernel execution time: ([0-9.+-e]+) \\(us\\)",
+    [
+      "100"
+    ]
+  ],
+  "atomicPerf-omp": [
+    "Average execution time of WarpRangeAtomicOnSharedMem: ([0-9.+-e]+) \\(us\\)",
+    [
+      "1024"
+    ]
+  ],
+  "attention-omp": [
+    "Average execution time of kernels ([0-9.+-e]+) \\(ms\\)",
+    [
+      "10000",
+      "10000",
+      "5"
+    ]
+  ],
+  "backprop-omp": [
+    "Device offloading time = ([0-9.+-e]+)\\(s\\)",
+    [
+      "65536"
+    ]
+  ]
+}
