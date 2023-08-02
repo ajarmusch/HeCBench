@@ -1,0 +1,15 @@
+Test_Name,Compiler,Status,Time
+accuracy-omp,clang,PASS,37835.463867
+adam-omp,clang,PASS,0.154306
+adv-omp,clang,PASS,1044470.0
+affine-omp,clang,PASS,0.000293842
+aidw-omp,clang,PASS,0.081314
+aligned-types-omp,clang,PASS,0.0
+all-pairs-distance-omp,clang,PASS,303.818
+asmooth-omp,clang,PASS,0.019847
+asta-omp,clang,PASS,0.01903
+atan2-omp,clang,PASS,580.695099
+atomicIntrinsics-omp,clang,PASS,140.220818
+atomicPerf-omp,clang,PASS,124.543941
+attention-omp,clang,PASS,3.322332
+backprop-omp,clang,PASS,0.091674

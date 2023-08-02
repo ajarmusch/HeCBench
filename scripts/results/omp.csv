@@ -1,0 +1,14 @@
+accuracy-omp,37835.463867
+adam-omp,0.154306
+adv-omp,1044470.0
+affine-omp,0.000293842
+aidw-omp,0.081314
+aligned-types-omp,0.0
+all-pairs-distance-omp,303.818
+asmooth-omp,0.019847
+asta-omp,0.01903
+atan2-omp,580.695099
+atomicIntrinsics-omp,140.220818
+atomicPerf-omp,124.543941
+attention-omp,3.322332
+backprop-omp,0.091674
