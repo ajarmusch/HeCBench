@@ -212,6 +212,7 @@ def main():
     for b in benches:
         try:
             if args.verbose:
+                print(os.getcwd())
                 print("running: {}".format(b.name))
             
             if args.warmup:

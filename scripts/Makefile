@@ -16,7 +16,7 @@
 override FILE_NCLANG := "createMakefiles-nclang.py"
 override FILE_NVC := "createMakefiles-nvc.py"
 override FILE_NGCC := "createMakefiles-ngcc.py"
-override PWD_HECBENCH := /opt/sollve/hecbench-2/
+override PWD_HECBENCH := /opt/sollve/hecbench-fork/
 override DIR := omp # Variable to hold the directory
 
 
