@@ -73,7 +73,7 @@ class Benchmark:
             print(proc.stdout)
 
     def run(self):
-        cmd = ["./" + self.binary] + self.args
+        cmd = ["srun", "./" + self.binary] + self.args
         proc = subprocess.run(cmd, cwd=self.path, stdout=subprocess.PIPE, encoding="ascii")
         out = proc.stdout
         if self.verbose:
