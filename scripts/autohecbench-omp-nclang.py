@@ -74,6 +74,7 @@ class Benchmark:
 
     def run(self):
         cmd = ["./" + self.binary] + self.args
+        #cmd = ["srun", "./" + self.binary] + self.args
         proc = subprocess.run(cmd, cwd=self.path, stdout=subprocess.PIPE, encoding="ascii")
         out = proc.stdout
         if self.verbose:
@@ -212,7 +213,6 @@ def main():
     for b in benches:
         try:
             if args.verbose:
-                print(os.getcwd())
                 print("running: {}".format(b.name))
             
             if args.warmup:

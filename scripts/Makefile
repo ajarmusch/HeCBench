@@ -67,8 +67,8 @@ auto-run-nvc:
 .PHONY: run-nclang
 run-nclang:
 	@clear; \
-    cd $(PWD_HECBENCH)$(DIR); \
-    make -f Makefile.nvc run; \
+	cd $(PWD_HECBENCH)$(DIR); \
+	make -f Makefile.nvc run; \
 
 .PHONY: create-nclang
 create-nclang:
@@ -78,7 +78,7 @@ create-nclang:
 auto-run-nclang:
 	@clear
 	@cd scripts; \
-	python3 autohecbench-omp-nclang.py $(DIR) --verbose --nvidia-sm 80 -o omp.csv; \
+	python3 autohecbench-omp-nclang.py $(DIR) --verbose -o omp.csv; \
 	echo ""; echo "omp.csv:"; cat omp.csv;
 
 .PHONY: clean-nclang
