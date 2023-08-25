@@ -8,7 +8,6 @@ import json
 import csv
 from collections import defaultdict
 
-
 # Function to load JSON data from a file
 def load_json(file_path):
     with open(file_path, 'r') as file:
@@ -67,7 +66,7 @@ def save_kernel_statistics_to_csv(kernel_statistics, output_file, output_folder)
     print(f"Kernel statistics saved to {output_file}")
 
 class Benchmark:
-    def __init__(self, args, name, res_regex, run_args = [], binary = "main", invert = False):
+    def __init__(self, args, name, invert = False):
         # print(name)
         if name.endswith('sycl'):
             self.MAKE_ARGS = ['GCC_TOOLCHAIN="{}"'.format(args.gcc_toolchain)]
@@ -83,10 +82,8 @@ class Benchmark:
         elif name.endswith('cuda'):
             self.MAKE_ARGS = ['CUDA_ARCH=sm_{}'.format(args.nvidia_sm)]
         elif name.endswith('omp'):
-            # print("MAKE_ARGS.append")
             self.MAKE_ARGS = ['-f']
             self.MAKE_ARGS.append('Makefile.nclang')
-            self.MAKE_ARGS.append('run')
         else:
             self.MAKE_ARGS = []
 
@@ -100,9 +97,7 @@ class Benchmark:
             self.path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', name)
 
         self.name = name
-        self.binary = binary
-        self.res_regex = res_regex
-        self.args = run_args
+        # self.args = run_args
         self.invert = invert
         self.clean = args.clean
         self.verbose = args.verbose
@@ -116,8 +111,7 @@ class Benchmark:
         if self.verbose:
             out = subprocess.PIPE
 
-        print(self.path)
-        proc = subprocess.run(["make"] + self.MAKE_ARGS , cwd=self.path, stdout=out, stderr=subprocess.STDOUT, encoding="ascii")
+        proc = subprocess.run(["make"] + self.MAKE_ARGS, cwd=self.path, stdout=out, stderr=subprocess.STDOUT, encoding="ascii")
         
         try:
             proc.check_returncode()
@@ -133,31 +127,25 @@ class Benchmark:
     def run(self): 
         input_file = self.name + '.json'  
         output_csv_file = self.name + '.csv'  
-        # cmd = ["./" + self.binary] + self.args
-        #cmd = ["srun", "./" + self.binary] + self.args
-        # cmd = [runtime_command, "./" + self.binary] + self.args
         my_env = os.environ.copy()
         my_env["LIBOMPTARGET_PROFILE"] = input_file
-        cmd = ['./' + self.binary] + self.args
-        proc = subprocess.run(cmd, cwd=self.path, stdout=subprocess.PIPE, encoding="ascii", env=my_env)
-        out = proc.stdout
+
+        out = subprocess.DEVNULL
         if self.verbose:
-            print(" ".join(cmd))
-            print(out)
-        # print(self.res_regex)
-        # pattern = self.res_regex.replace('\\s', '\(s\)')#.replace('\\us', '\(us\)').replace('\\ms', '\(ms\)')
-        # pattern = r'Device offloading time = ([0-9.+-e]+)\(s\)'
-        #             Device offloading time = ([0-9.+-e]+)\\s"
-        # pattern = r'Average execution time of accuracy kernel: ([0-9.+-e]+) \(us\)'
-        #             Average execution time of accuracy kernel: ([0-9.+-e]+)\\us",
-                    # Average kernel execution time \(w/ shared memory\): ([0-9.]+) \(us\)
-        res = re.findall(self.res_regex, out)
-        # res = re.findall(pattern, out)
-        if not res:
-            raise Exception(self.path + ":\nno regex match for " + self.res_regex + " in\n" + out)
-        res = sum([float(i) for i in res]) #in case of multiple outputs sum them
-        if self.invert:
-            res = 1/res
+            out = subprocess.PIPE
+
+        proc = subprocess.run(['make'] + self.MAKE_ARGS + ['run'], cwd=self.path, stdout=out, stderr=subprocess.STDOUT, encoding="ascii", env=my_env)
+        
+        try:
+            proc.check_returncode()
+        except subprocess.CalledProcessError as e:
+            print(f'Failed at runtime in {self.path}.\n{e}')
+            if e.stderr:
+                print(e.stderr, file=sys.stderr)
+            raise(e)
+
+        if self.verbose:
+            print(proc.stdout)
             
         data = load_json(self.path + '/' + input_file)
         kernel_details = extract_kernel_details(data)
@@ -166,40 +154,12 @@ class Benchmark:
             os.makedirs('kernel-stats')
         save_kernel_statistics_to_csv(kernel_statistics, output_csv_file, 'kernel-stats')
         
-        return res
+        return 0
 
 
 def comp(b):
     print("compiling: {}".format(b.name))
     b.compile()
-
-def output_gen(compiler):
-    with open('./benchmarks/subset-omp-test.json', 'r') as bench_info_file:
-        bench_info = json.load(bench_info_file)
-        bench_names = list(bench_info.keys())
-        print(bench_names[0])
-
-    with open("omp.csv", 'r') as bench_output:
-        bench_output_res = list(csv.reader(bench_output))
-        print(bench_output_res[0][0])
-        #for bench_passes in range(len(bench_output_res)):
-            #print(bench_output_res[bench_passes][0])
-
-    with open('output.csv', 'w', newline='') as out_file:
-        writer = csv.writer(out_file)
-        writer.writerow(["Test_Name", "Compiler", "Status", "Time"])
-        for a in range(len(bench_names)):
-            check_pres=0
-            for bench_passes in range(len(bench_output_res)):
-                print(bench_names[a])
-                if bench_names[a] == (bench_output_res[bench_passes][0]):
-                    check_pres = 1
-                    pass_val=bench_passes
-
-            if check_pres == 1:
-                writer.writerow([bench_output_res[pass_val][0], compiler, "PASS", bench_output_res[pass_val][1]])
-            else:
-                writer.writerow([bench_names[a], compiler, "FAIL", "N/A"])
 
 def main():
     parser = argparse.ArgumentParser(description='HeCBench runner')
@@ -207,8 +167,6 @@ def main():
                         help='Output file for csv results')
     parser.add_argument('--repeat', '-r', type=int, default=1,
                         help='Repeat benchmark run')
-    parser.add_argument('--warmup', '-w', type=bool, default=True,
-                        help='Run a warmup iteration')
     parser.add_argument('--sycl-type', '-s', choices=['cuda', 'hip', 'opencl'], default='cuda',
                         help='Type of SYCL device to use')
     parser.add_argument('--nvidia-sm', type=int, default=60,
@@ -243,7 +201,7 @@ def main():
     if args.bench_data:
         bench_data = args.bench_data
     else:
-        bench_data = os.path.join(script_dir, 'benchmarks', 'subset-omp-test.json') 
+        bench_data = os.path.join(script_dir, 'benchmarks', 'subset.json') 
 
     with open(bench_data) as f:
         benchmarks = json.load(f)
@@ -280,10 +238,10 @@ def main():
     t_compiled = time.time()
 
     outfile = sys.stdout
-    # print(outfile)
-    # print(args.output)
+
     if args.output:
         outfile = open(args.output, 'w')
+        print("Test_Name" + "," + "Compiler" + "," + "Status" + "," + "Time", file=outfile)
         
     if args.runtime:
         runtime_command = args.runtime
@@ -294,16 +252,30 @@ def main():
         try:
             if args.verbose:
                 print("running: {}".format(b.name))
-            
-            if args.warmup:
-                b.run()
+
+            t0_runtime = time.time()
 
             res = []
             for i in range(args.repeat):
-                res.append(str(b.run()))
-                
-            print(b.name + "," + ", ".join(res), file=outfile)
+                print("starting")
+                b.run()
+                t_runtime = time.time()
+                res.append(str(t_runtime-t0_runtime))
+    
+            if args.repeat:
+                if len(res) > 0:
+                    avg_res = sum(map(float, res)) / len(res)
+                    print("Average result:", avg_res)
+                else:
+                    print("No results to average")
+
+
+            print(b.name + "," + "clang" + "," + "PASS" + ",{},{}".format(avg_res, t_runtime-t0_runtime), file=outfile)
+
+            # print(b.name + "," + "clang" + "," + "PASS" + "," + ",".join(res), file=outfile)
+            # print(b.name + "," + ", ".join(res), file=outfile)
         except Exception as err:
+            print(b.name + "," + "clang" + "," + "FAIL" + "," + "N/A", file=outfile)
             print("Error running: ", b.name)
             print(err)
     if args.output:
@@ -311,7 +283,6 @@ def main():
 
     t_done = time.time()
     print("compilation took {} s, runnning took {} s.".format(t_compiled-t0, t_done-t_compiled))
-    output_gen("clang")
 
 if __name__ == "__main__":
     main()

@@ -4,23 +4,26 @@ aop-sycl
 bn-hip
 jacobi-hip
 
-aes-omp
+compile failers
 
-  "amgmk-omp": [
-    "Total Wall time = ([0-9.+-e]+) \\(seconds\\)."
-  ]
-
-  "ans-omp": [
-  ]
-
-  "atomicReduction-omp": [
-    "The average performance of reduction is ([0-9.+-e]+) GBytes/sec",
-    [
-    ]
-  ]
-
-    "axhelm-omp": [
-    "The average performance of reduction is ([0-9.+-e]+) GBytes/sec",
-    [
-    ]
-  ]
+axhelm-omp
+miniFE-omp
+lsqt-omp
+mdh-omp
+sad-omp
+distort-omp
+slu-omp
+heat-omp
+xlqc-omp
+zeropoint-omp
+cm-omp
+mkl-sgemm-omp
+testSNAP-omp
+mandelbrot-omp
+sptrsv-omp
+langford-omp
+sw4ck-omp
+log2-omp
+minibude-omp
+interval-omp
+fsm-omp
