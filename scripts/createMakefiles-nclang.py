@@ -37,7 +37,7 @@ def edit_file(file_path, new_file_path):
     with open(file_path, "r") as file:
         content = file.read()
         content = (
-            content.replace("-target x86_64-pc-linux-gnu", "-lm")
+            content.replace("-target x86_64-pc-linux-gnu", "-lm -g")
             .replace("-fopenmp -fopenmp-targets=amdgcn-amd-amdhsa", "-O3")
             .replace("-Xopenmp-target=amdgcn-amd-amdhsa", "-fopenmp")
             .replace("-march=$(ARCH)", "--offload-arch=native")

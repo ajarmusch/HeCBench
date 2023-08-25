@@ -3,3 +3,24 @@ minimod-cuda
 aop-sycl
 bn-hip
 jacobi-hip
+
+aes-omp
+
+  "amgmk-omp": [
+    "Total Wall time = ([0-9.+-e]+) \\(seconds\\)."
+  ]
+
+  "ans-omp": [
+  ]
+
+  "atomicReduction-omp": [
+    "The average performance of reduction is ([0-9.+-e]+) GBytes/sec",
+    [
+    ]
+  ]
+
+    "axhelm-omp": [
+    "The average performance of reduction is ([0-9.+-e]+) GBytes/sec",
+    [
+    ]
+  ]

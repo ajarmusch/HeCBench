@@ -6,7 +6,65 @@ import re, time, sys, subprocess, multiprocessing, os
 import argparse
 import json
 import csv
+from collections import defaultdict
 
+
+# Function to load JSON data from a file
+def load_json(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+# Function to extract kernel details from the JSON data
+def extract_kernel_details(data):
+    kernel_details = defaultdict(list)
+    for event in data['traceEvents']:
+        if 'name' in event and 'dur' in event and ('Kernel' in event['name'] or 'kernel' in event['name']) and 'args' in event:
+            kernel_name = event['name']
+            kernel_duration = event['dur']
+            if 'detail' in event['args']:
+                kernel_detail = event['args']['detail']
+                kernel_detail_tuple = tuple(kernel_detail.strip(';').split(';'))
+                kernel_details[kernel_name].append((kernel_duration, kernel_detail_tuple))
+            else:
+                kernel_details[kernel_name].append((kernel_duration,))
+    return kernel_details
+
+# Function to calculate statistics for each kernel name
+def calculate_kernel_statistics(kernel_details):
+    kernel_statistics = {}
+    for kernel_name, details_list in kernel_details.items():
+        max_duration = max(details_list, key=lambda x: x[0])[0]
+        min_duration = min(details_list, key=lambda x: x[0])[0]
+        total_duration = sum(d[0] for d in details_list)
+        avg_duration = total_duration / len(details_list)
+        kernel_statistics[kernel_name] = {
+            'max_duration': max_duration,
+            'min_duration': min_duration,
+            'avg_duration': avg_duration,
+            'total_duration': total_duration
+        }
+    return kernel_statistics
+
+# Function to save kernel statistics to a CSV file
+def save_kernel_statistics_to_csv(kernel_statistics, output_file, output_folder):
+    output_file_path = os.path.join(output_folder, output_file)
+    with open(output_file_path, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(['Kernel Name', 'Max Duration', 'Min Duration', 'Average Duration', 'Total Duration', 'Detail'])
+        for kernel_name, details in kernel_statistics.items():
+            detail = ''
+            if 'detail' in details:
+                detail = ';'.join(details['detail'])
+            csv_writer.writerow([
+                kernel_name,
+                details['max_duration'],
+                details['min_duration'],
+                details['avg_duration'],
+                details['total_duration'],
+                detail
+            ])
+    print(f"Kernel statistics saved to {output_file}")
 
 class Benchmark:
     def __init__(self, args, name, res_regex, run_args = [], binary = "main", invert = False):
@@ -72,10 +130,16 @@ class Benchmark:
         if self.verbose:
             print(proc.stdout)
 
-    def run(self):
-        cmd = ["./" + self.binary] + self.args
+    def run(self): 
+        input_file = self.name + '.json'  
+        output_csv_file = self.name + '.csv'  
+        # cmd = ["./" + self.binary] + self.args
         #cmd = ["srun", "./" + self.binary] + self.args
-        proc = subprocess.run(cmd, cwd=self.path, stdout=subprocess.PIPE, encoding="ascii")
+        # cmd = [runtime_command, "./" + self.binary] + self.args
+        my_env = os.environ.copy()
+        my_env["LIBOMPTARGET_PROFILE"] = input_file
+        cmd = ['./' + self.binary] + self.args
+        proc = subprocess.run(cmd, cwd=self.path, stdout=subprocess.PIPE, encoding="ascii", env=my_env)
         out = proc.stdout
         if self.verbose:
             print(" ".join(cmd))
@@ -94,6 +158,14 @@ class Benchmark:
         res = sum([float(i) for i in res]) #in case of multiple outputs sum them
         if self.invert:
             res = 1/res
+            
+        data = load_json(self.path + '/' + input_file)
+        kernel_details = extract_kernel_details(data)
+        kernel_statistics = calculate_kernel_statistics(kernel_details)
+        if not os.path.exists('kernel-stats'):
+            os.makedirs('kernel-stats')
+        save_kernel_statistics_to_csv(kernel_statistics, output_csv_file, 'kernel-stats')
+        
         return res
 
 
@@ -151,6 +223,8 @@ def main():
                         help='Clean the builds')
     parser.add_argument('--verbose', '-v', action='store_true',
                         help='Clean the builds')
+    parser.add_argument('--runtime', '-R', choices=['srun', 'jsrun'], default='',
+                        help='If you need to specify srun or jsrun at runtime')
     parser.add_argument('--bench-dir', '-b',
                         help='Benchmark directory')
     parser.add_argument('--bench-data', '-d',
@@ -159,6 +233,7 @@ def main():
                         help='List of failing benchmarks to ignore')
     parser.add_argument('bench', nargs='+',
                         help='Either specific benchmark name or sycl, cuda, or hip')
+    
 
     args = parser.parse_args()
 
@@ -209,6 +284,11 @@ def main():
     # print(args.output)
     if args.output:
         outfile = open(args.output, 'w')
+        
+    if args.runtime:
+        runtime_command = args.runtime
+    else:
+        runtime_command = ''
 
     for b in benches:
         try:

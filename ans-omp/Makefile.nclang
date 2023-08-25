@@ -1,6 +1,6 @@
 ARCH = $(ARCH)
 NVCC = clang++
-NVCC_FLAGS = --std=c++14 -O3 -lm \
+NVCC_FLAGS = --std=c++14 -O3 -lm -g \
           -O3 \
           -fopenmp \
           --offload-arch=native \

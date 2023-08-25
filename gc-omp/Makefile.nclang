@@ -42,7 +42,7 @@ ifeq ($(OPTIMIZE),yes)
 endif
 
 ifeq ($(DEVICE),gpu)
-  CFLAGS += -DOMP_TARGET -lm \
+  CFLAGS += -DOMP_TARGET -lm -g \
           -O3 \
           -fopenmp \
           --offload-arch=native

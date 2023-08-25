@@ -114,6 +114,11 @@ clean-ngcc:
 # Clean
 ###################################################
 
+.PHONY: python-clean
+python-clean:
+	rm -rf kernel-stats
+	python3 autohecbench-omp-nclang.py omp -c
+	
 # edit:
 # 	vim ./$(FILE)
 

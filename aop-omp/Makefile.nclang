@@ -7,17 +7,16 @@ CC        = clang++
 OPTIMIZE  = yes
 DEBUG     = no
 DEVICE    = gpu
-ARCH      = gfx906
 
 #===============================================================================
 # Program name & source code list
 #===============================================================================
 
-program = rsbench
+program = main
 
-source = init.c  io.c  main.c  material.c  simulation.c  utils.c
+source = main.cpp
 
-obj = $(source:.c=.o)
+obj = $(source:.cpp=.o)
 
 #===============================================================================
 # Sets Flags
@@ -31,7 +30,7 @@ LDFLAGS =
 
 # Debug Flags
 ifeq ($(DEBUG),yes)
-  CFLAGS += -g
+  CFLAGS += -g -DDEBUG
   LDFLAGS  += -g
 endif
 
@@ -42,25 +41,23 @@ ifeq ($(OPTIMIZE),yes)
 endif
 
 ifeq ($(DEVICE),gpu)
-  CFLAGS += -lm -g \
-          -O3 \
-          -fopenmp \
-          --offload-arch=native
+  CFLAGS +=-lm -O3 -fopenmp --offload-arch=native -g 
 else
-  CFLAGS +=-fopenmp
+  CFLAGS +=-qopenmp
 endif
 #===============================================================================
 # Targets to Build
 #===============================================================================
 
-$(program): $(obj)
+$(program): $(obj) Makefile
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-%.o: %.c
+%.o: %.cpp Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(program) $(obj)
 
 run: $(program)
-	./$(program) -s large -m event
+	./$(program) -runs 100
+

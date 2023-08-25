@@ -42,7 +42,7 @@ ifeq ($(OPTIMIZE),yes)
 endif
 
 ifeq ($(DEVICE),gpu)
-  CFLAGS += -lm \
+  CFLAGS += -lm -g \
           -fopenmp-targets=amdgcn-amd-amdhsa \
           -fopenmp \
           --offload-arch=native

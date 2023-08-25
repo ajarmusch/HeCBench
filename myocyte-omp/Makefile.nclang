@@ -12,7 +12,7 @@ CFLAGS := $(EXTRA_CFLAGS)  -Wall
 LDFLAGS = -lm
 
 ifeq ($(DEVICE),gpu)
-  CFLAGS += -lm \
+  CFLAGS += -lm -g \
           -O3 \
           -fopenmp \
           --offload-arch=native
