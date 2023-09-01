@@ -25,7 +25,7 @@ Each benchmark falls into a single category. While such classification is not ac
     all-pairs-distance, bsw, ccs, cm, deredundancy, diamond, epistasis, extend2, frna, fsm, ga, logan, minibude, minimap2, nbnxm, nw, pcc, prna, sa, snake
 
 ### Computer vision and image processing
-    affine, aobench, asmooth, background-subtract, bezier-surface, bilateral, bm3d, boxfilter, cbsfil, car, ced, colorwheel, convolution1D, convolutionSeperable, dct8x8, debayer, depixel, degrid, doh, dpid, egs, face, flame, gabor, gamma-correction, hogbom, mandelbrot, marchCubes, match, medianfilter, morphology, mriQ, ne, perlin, sobel, tonemapping, recursiveGaussian, resize, sad, seam-carving, spm, srad, stencil1d, stencil3d, surfel, zoom
+    affine, aobench, asmooth, background-subtract, bezier-surface, bilateral, bm3d, boxfilter, cbsfil, car, ced, colorwheel, convolution1D, convolutionSeperable, dct8x8, debayer, depixel, degrid, doh, dpid, egs, face, flame, gabor, gamma-correction, hogbom, mandelbrot, marchCubes, match, medianfilter, morphology, mriQ, ne, perlin, sobel, tonemapping, recursiveGaussian, resize, sad, seam-carving, spm, srad, ssim, stencil1d, stencil3d, surfel, zoom
     
 ### Cryptography
     aes, bitcracker, chacha20, columnarSolver, ecdh, keccaktreehash, merkle, present  
@@ -52,7 +52,7 @@ Each benchmark falls into a single category. While such classification is not ac
     accuracy, adam, addBiasResidualLayerNorm, attention, attentionMultiHead, backprop, bincount, bn, channelShuffle, channelSum, clink, concat, crossEntropy, dense-embedding, dropout, dwconv, expdist, flip, gd, gelu, ge-spmm, glu, gmm, gru, kalman, kmc, kmeans, knn, lda, lif, logprob, lr, lrn, mask, matern, maxpool3d, mcpr, meanshift, mf-sgd, mmcsf, mnist, mrc, multinomial, nlll, nonzero, overlay, p4, page-rank, perplexity, pointwise, pool, qtclustering, remap, relu, resnet-kernels, rowwiseMoments, sampling, scel, softmax, stddev, streamcluster, swish, unfold, vol2col, wedford, winograd, word2vec
 
 ### Math
-    atan2, complex, cross, determinant, divergence, dp, eigenvalue, f16max, f16sp, frechet, fresnel, fwt, gaussian, geam, gemmEx, hellinger, hmm, idivide, interval, jaccard, jacobi, kurtosis, lanczos, langford, lci, lebesgue, leukocyte, lfib4, log2, lud, michalewicz, matrix-rotate, matrixT, minkowski, mr, norm2, nqueen, ntt, phmm, pnpoly, rfs, romberg, rsc, secp256k1, simpleSpmv, slu, sptrsv, thomas, wyllie, zeropoint
+    atan2, complex, cross, determinant, divergence, dp, eigenvalue, f16max, f16sp, frechet, fresnel, fwt, gaussian, geam, gemmEx, hellinger, hmm, idivide, interval, jaccard, jacobi, kurtosis, lanczos, langford, lci, lebesgue, leukocyte, lfib4, log2, lud, michalewicz, matrix-rotate, matrixT, minkowski, mr, norm2, nqueen, ntt, phmm, pnpoly, rfs, romberg, rsc, secp256k1, simpleSpmv, slu, spmm, sptrsv, thomas, wyllie, zeropoint
    
 ### Random number generation
     mt, permutate, qrg, rng-wallace, sobol, urng
@@ -1272,6 +1272,9 @@ Early results are shown [here](results/README.md)
 ### spm (cuda)
   Image registration calculations for the statistical parametric mapping (SPM) system (http://mri.ee.ntust.edu.tw/cuda/)
 
+### spmm (cuda)
+  Library-based sparse matrix sparse matrix product (https://docs.nvidia.com/cuda/cusparse/index.html)
+
 ### sptrsv (cuda)
   A thread-Level synchronization-free sparse triangular solver (https://github.com/JiyaSu/CapelliniSpTRSV)
 
@@ -1280,6 +1283,9 @@ Early results are shown [here](results/README.md)
 
 ### ss (opencl)
   String search (https://github.com/OpenCL/AMD_APP_samples)
+
+### ssim (cuda)
+  Compute structual similarity index measure (https://github.com/VIDILabs/instantvnr)
 
 ### sssp (opencl)
   The single-source shortest path (https://github.com/chai-benchmarks/chai)
